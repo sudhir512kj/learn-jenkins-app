@@ -7,12 +7,6 @@ pipeline {
     }
 
     stages {
-        // This is a comment
-        /*
-        this is a multi line comment
-        line 1
-        line 2
-        */
         stage('Build') {
             agent {
                 docker {
@@ -22,6 +16,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    echo 'Small change'
                     ls -la
                     node --version
                     npm --version
