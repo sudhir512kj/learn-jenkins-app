@@ -8,6 +8,7 @@ pipeline {
         line 1
         line 2
         */
+        /*
         stage('Build') {
             agent {
                 docker {
@@ -28,6 +29,7 @@ pipeline {
                 '''
             }
         }
+        */
         stage('Test') {
             agent {
                 docker {
@@ -47,7 +49,7 @@ pipeline {
         stage('E2E') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.47.2-noble'
+                    image 'mcr.microsoft.com/playwright:v1.48.0-jammy'
                     reuseNode true
                 }
             }
