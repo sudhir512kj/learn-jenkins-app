@@ -4,6 +4,7 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = '6d5f6ca6-7691-4aa7-9e23-45cec296a843'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
+        REACT_APP_VERSION = '1.2.3'
     }
 
     stages {
@@ -16,15 +17,12 @@ pipeline {
             }
             steps {
                 sh '''
-                    echo 'Small change'
-                    ls -la
                     node --version
                     npm --version
                     npm install tryer
                     rm -rf node_modules package-lock.json
                     npm i
                     npm run build
-                    ls -la
                 '''
             }
         }
@@ -109,13 +107,15 @@ pipeline {
             }
         }
 
+        /*
         stage('Approval') {
             steps {
                 timeout(time: 15, unit: 'MINUTES') {
                     input message: 'Do you wish to deploy to production?', ok: 'Yes, I am sure!'
                 }
             }
-        }
+        } 
+        */
 
         stage('Deploy Production') {
             agent {
