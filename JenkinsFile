@@ -1,6 +1,6 @@
-def setBuildVersion() {
+def setBuildVersion(buildId) {
     def versionFile = 'version.txt'
-    def defaultVersion = 'v0.0.0'
+    def defaultVersion = 'v1.0.0'
     def currentVersion
     
     // Check if version file exists, if not create it with default version
@@ -14,8 +14,8 @@ def setBuildVersion() {
     // Split the version into major, minor, and patch
     def (major, minor, patch) = currentVersion.substring(1).tokenize('.').collect { it.toInteger() }
     
-    // Get the current build number
-    def buildNumber = env.BUILD_NUMBER.toInteger()
+    // Convert BUILD_ID to integer
+    def buildNumber = buildId.toInteger()
     
     if (buildNumber % 100 == 0) {
         // Every 100th build, increment major version
@@ -37,12 +37,8 @@ def setBuildVersion() {
     // Save the new version to the file
     writeFile file: versionFile, text: newVersion
     
-    // Set an environment variable with the new version
-    env.BUILD_VERSION = newVersion
-    
-    echo "Build version set to ${newVersion}"
-
-    return env.BUILD_VERSION
+    // Return the new version
+    return newVersion
 }
 
 
@@ -59,7 +55,10 @@ pipeline {
         stage('Set Build Version') {
             steps {
                 script {
-                    setBuildVersion()
+                    def newVersion = setBuildVersion(env.BUILD_ID)
+                    env.BUILD_VERSION = newVersion
+                    env.REACT_APP_VERSION = newVersion
+                    echo "REACT_APP_VERSION set to ${env.REACT_APP_VERSION}"
                 }
             }
         }
