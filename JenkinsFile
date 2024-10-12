@@ -41,6 +41,8 @@ def setBuildVersion() {
     env.BUILD_VERSION = newVersion
     
     echo "Build version set to ${newVersion}"
+
+    return env.BUILD_VERSION
 }
 
 
@@ -50,7 +52,7 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = '6d5f6ca6-7691-4aa7-9e23-45cec296a843'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-        REACT_APP_VERSION = "${env.BUILD_VERSION}"
+        REACT_APP_VERSION = setBuildVersion()
     }
 
     stages {
