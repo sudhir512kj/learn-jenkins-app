@@ -47,6 +47,7 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
+        TASK_DEF_FILE = 'file://aws/task-definition-prod.json'
         ECS_CLUSTER = 'LearnJenkinsApp-Cluster-Prod'
         ECS_CLUSTER_SERVICE = 'LearnJenkinsApp-Service-Prod'
         ECS_CLUSTER_TASK_DEF = 'LearnJenkinsApp-TaskDefinition-Prod'
@@ -77,8 +78,9 @@ pipeline {
                     sh '''
                         aws --version
                         yum install jq -y
-                        TASK_DEF_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition-prod.json | jq '.taskDefinition.revision')
+                        TASK_DEF_REVISION=$(aws ecs register-task-definition --cli-input-json $TASK_DEF_FILE | jq '.taskDefinition.revision')
                         aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_CLUSTER_SERVICE --task-definition $ECS_CLUSTER_TASK_DEF:$TASK_DEF_REVISION
+                        aws ecs wait service-stable --cluster $ECS_CLUSTER --service $ECS_CLUSTER_SERVICE
                     '''
                 }
             }
