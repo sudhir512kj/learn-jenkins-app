@@ -1,43 +1,15 @@
 def setBuildVersion(buildId) {
-    def versionFile = 'version.txt'
-    def defaultVersion = '1.0.0'
-    def currentVersion
-    
-    // Check if version file exists, if not create it with default version
-    if (!fileExists(versionFile)) {
-        writeFile file: versionFile, text: defaultVersion
-        currentVersion = defaultVersion
-    } else {
-        currentVersion = readFile(versionFile).trim()
-    }
-    
-    // Split the version into major, minor, and patch
-    def (major, minor, patch) = currentVersion.substring(1).tokenize('.').collect { it.toInteger() }
-    
-    // Convert BUILD_ID to integer
     def buildNumber = buildId.toInteger()
     
-    if (buildNumber % 100 == 0) {
-        // Every 100th build, increment major version
-        major++
-        minor = 0
-        patch = 0
-    } else if (buildNumber % 10 == 0) {
-        // Every 10th build, increment minor version
-        minor++
-        patch = 0
-    } else {
-        // Otherwise, increment patch version
-        patch++
-    }
+    // Calculate major, minor, and patch versions based on build number
+    def major = (buildNumber / 100).intValue()
+    def minor = ((buildNumber % 100) / 10).intValue()
+    def patch = buildNumber % 10
     
     // Format the new version string
     def newVersion = "${major}.${minor}.${patch}"
     
-    // Save the new version to the file
-    writeFile file: versionFile, text: newVersion
-    
-    // Return the new version
+    echo "Build version set to ${newVersion}"
     return newVersion
 }
 
