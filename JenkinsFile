@@ -48,6 +48,7 @@ pipeline {
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
         TASK_DEF_FILE = 'file://aws/task-definition-prod.json'
+        APP_IMAGE = 'learn-jenkins-app'
         ECS_CLUSTER = 'LearnJenkinsApp-Cluster-Prod'
         ECS_CLUSTER_SERVICE = 'LearnJenkinsApp-Service-Prod'
         ECS_CLUSTER_TASK_DEF = 'LearnJenkinsApp-TaskDefinition-Prod'
@@ -75,7 +76,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker build -t learn-jenkins-app .
+                    docker build -t $APP_IMAGE:${env.REACT_APP_VERSION} .
                 '''
             }
         }
@@ -103,7 +104,7 @@ pipeline {
             agent {
                 docker {
                     image 'learn-jenkins-aws-cli'
-                    args "-u root --entrypoint=''"
+                    args "--entrypoint=''"
                     reuseNode true
                 }
             }
