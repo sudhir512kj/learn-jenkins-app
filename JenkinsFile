@@ -1,6 +1,6 @@
 def setBuildVersion(buildId) {
     def versionFile = 'version.txt'
-    def defaultVersion = 'v1.0.0'
+    def defaultVersion = '1.0.0'
     def currentVersion
     
     // Check if version file exists, if not create it with default version
@@ -32,7 +32,7 @@ def setBuildVersion(buildId) {
     }
     
     // Format the new version string
-    def newVersion = "v${major}.${minor}.${patch}"
+    def newVersion = "${major}.${minor}.${patch}"
     
     // Save the new version to the file
     writeFile file: versionFile, text: newVersion
@@ -115,12 +115,13 @@ pipeline {
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'learn-jenkins-app-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh '''
+                    sh """
                         aws --version
+                        sed -i "s/#APP_VERSION#/${env.REACT_APP_VERSION}/g" aws/task-definition-prod.json
                         TASK_DEF_REVISION=$(aws ecs register-task-definition --cli-input-json $TASK_DEF_FILE | jq '.taskDefinition.revision')
                         aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_CLUSTER_SERVICE --task-definition $ECS_CLUSTER_TASK_DEF:$TASK_DEF_REVISION
                         aws ecs wait services-stable --cluster $ECS_CLUSTER --service $ECS_CLUSTER_SERVICE
-                    '''
+                    """
                 }
             }
         }
