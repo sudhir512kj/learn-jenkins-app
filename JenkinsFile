@@ -75,9 +75,7 @@ pipeline {
                 }
             }
             steps {
-                sh '''
-                    docker build -t $APP_IMAGE:${env.REACT_APP_VERSION} .
-                '''
+                sh "docker build -t $APP_IMAGE:${env.REACT_APP_VERSION} ."
             }
         }
 
