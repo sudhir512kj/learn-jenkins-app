@@ -5,7 +5,7 @@
   "family": "LearnJenkinsApp-TaskDefinition-Prod",
   "containerDefinitions": [
     {
-      "name": "learnjenkinsapp",
+      "name": "learn-jenkins-app",
       "image": "748972035298.dkr.ecr.us-east-1.amazonaws.com/learn-jenkins-app:#APP_VERSION#",
       "portMappings": [
         {
