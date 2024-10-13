@@ -113,11 +113,14 @@ pipeline {
                     reuseNode true
                 }
             }
+            environment {
+                REACT_APP_VERSION_NEW = "${env.REACT_APP_VERSION}"
+            }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'learn-jenkins-app-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh """
                         aws --version
-                        sed -i "s/#APP_VERSION#/${env.REACT_APP_VERSION}/g" aws/task-definition-prod.json
+                        sed -i "s/#APP_VERSION#/$REACT_APP_VERSION_NEW/g" aws/task-definition-prod.json
                         TASK_DEF_REVISION=$(aws ecs register-task-definition --cli-input-json $TASK_DEF_FILE | jq '.taskDefinition.revision')
                         aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_CLUSTER_SERVICE --task-definition $ECS_CLUSTER_TASK_DEF:$TASK_DEF_REVISION
                         aws ecs wait services-stable --cluster $ECS_CLUSTER --service $ECS_CLUSTER_SERVICE
